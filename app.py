@@ -1,4 +1,7 @@
 import streamlit as st
+from PyPDF2 import PdfReader
+from dotenv import load_dotenv
+
 def add_custom_css():
     st.markdown("""
     <style>
@@ -60,6 +63,14 @@ def add_custom_css():
     </style>
     """, unsafe_allow_html=True)
 
+def get_text(docs):
+    text = ""
+    for pdf in docs:
+        reader = PdfReader(pdf)
+        for page in reader.pages:
+            text += page.extract_text()
+    return text
+        
 def main():
     st.set_page_config(page_title="SnapDoc", page_icon="📚", layout="wide")
     add_custom_css()
@@ -70,8 +81,15 @@ def main():
 
     with st.sidebar:
         st.subheader("Your Documents")
-        st.file_uploader("Upload PDFs here:", type=["pdf"], accept_multiple_files=True)
-        st.button("Process")
+        docs = st.file_uploader("Upload PDFs here:", type=["pdf"], accept_multiple_files=True)
+        if st.button("Process"):
+            with st.spinner("Processing..."):
+                #getting raw content from the pdfs
+                raw_content = get_text(docs)
+                #get the text chunks
+
+                #creating vector store7
+
 
 if __name__ == '__main__':
     main()
