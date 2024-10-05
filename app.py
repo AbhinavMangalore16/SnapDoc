@@ -1,6 +1,7 @@
 import streamlit as st
 from PyPDF2 import PdfReader
 from dotenv import load_dotenv
+from langchain.text_splitter import CharacterTextSplitter
 
 def add_custom_css():
     st.markdown("""
@@ -70,6 +71,11 @@ def get_text(docs):
         for page in reader.pages:
             text += page.extract_text()
     return text
+
+def text_chunking(content):
+    chunker = CharacterTextSplitter(separator="\n", chunk_size =1000, chunk_overlap=200, length_function = len)
+    chunks = chunker.split_text(content)
+    return chunks 
         
 def main():
     st.set_page_config(page_title="SnapDoc", page_icon="📚", layout="wide")
@@ -87,7 +93,8 @@ def main():
                 #getting raw content from the pdfs
                 raw_content = get_text(docs)
                 #get the text chunks
-
+                content_chunks = text_chunking(raw_content)
+                st.write(content_chunks)
                 #creating vector store7
 
 
